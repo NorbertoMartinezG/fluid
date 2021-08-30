@@ -159,7 +159,7 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
            Vector2 fpress = new Vector2(0.0,0.0);
            //Vector2 fvisc = new Vector2(0.0,0.0);
            Offset fvisc = Offset(0, 0);
-           Offset fpress2 = Offset(0.0, 0.0);;
+           Offset fpress2 = Offset(0.0, 0.0);
 
 
            for (int j = 0; j < nodeList.length; j++){
