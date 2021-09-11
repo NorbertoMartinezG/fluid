@@ -43,7 +43,7 @@ class DemoBody extends StatefulWidget {
 class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
   AnimationController animationController;
   final nodeList = <Node>[];
-  final numNodes = 150;
+  final numNodes = 100;
 
   @override
   void initState() {
@@ -358,9 +358,12 @@ class Node {
     direction = Direction.values[random.nextInt(Direction.values.length)];
 
     notePaint = new Paint()
-      ..color = Colors.blueAccent
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.fill;
+      ..color = Colors.blue.shade50;
+      //..strokeWidth = 3.0 // ancho del contorno del circulo relacionado con style
+      //..maskFilter = MaskFilter.blur(BlurStyle.solid, 3.0) // desemfoque, QUITA RENDIMIENTO
+      //..style = PaintingStyle.stroke; // circulo relleno o vacio
+    
+    
     linePaint = new Paint()
       ..color = Colors.blueAccent
       ..strokeWidth = 0.5
@@ -541,6 +544,7 @@ class Node {
 
   void display(Canvas canvas) {
     canvas.drawCircle(position, size, notePaint);
+    
 
    // connected.forEach((id, node) {
    //   canvas.drawLine(position, node.position, linePaint);
