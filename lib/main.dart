@@ -43,7 +43,7 @@ class DemoBody extends StatefulWidget {
 class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
   AnimationController animationController;
   final nodeList = <Node>[];
-  final numNodes = 100;
+  final numNodes = 150;
 
   @override
   void initState() {
@@ -121,7 +121,7 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
           id: i, 
           screenSize: widget.screenSize, 
           position: Offset(valx, valy),
-          viscosidad: Offset(0.0, 0.0),
+          viscosidad: Offset(1.0, 1.0),
           densidad: 0.0,
           velocidad: Offset(0.0, 0.0)
           )
@@ -188,16 +188,18 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
                 //fpress += (rij2.normalized())* -1 * MASS * (nodeList[x].presion + nodeList[j].presion) / (2.0 * nodeList[j].densidad) * SPIKY_GRAD * pow(H - r, 2.0); 
                 fpress2 = Offset(fpress[0],fpress[1]); // tomar valores de (fpress vector2) para (fpress2 offset)
                 // compute viscosity force contribution
-                fvisc += ((nodeList[j].viscosidad - nodeList[x].viscosidad)/nodeList[j].densidad)* VISC * MASS * VISC_LAP * (H-r); // variable offset 
+                fvisc += ((nodeList[j].velocidad - nodeList[x].velocidad)/nodeList[j].densidad)* VISC * MASS * VISC_LAP * (H - r); // variable offset 
+                //print(fvisc);
              }
            }
             Offset fgrav = G * nodeList[x].densidad;
-            nodeList[x].fuerzas = fgrav - fvisc + fpress2;
+            nodeList[x].fuerzas = fgrav + fvisc + fpress2;
             //print(nodeList[x].fuerzas);
             //print("funciona");
-            
+           
+            // COLOR DE PARTICULA SEGUN LA FUERZA EN CADA UNA DE ELLAS
             double fuerzaTotal = nodeList[x].fuerzas.dx + nodeList[x].fuerzas.dy ;
-            double colorDinamico2 = fuerzaTotal/100;
+            double colorDinamico2 = fuerzaTotal/10;
             int colorDinamico3 = colorDinamico2.toInt(); 
             int colorDinamico4 = colorDinamico3.abs();
             nodeList[x].notePaint.color=Color.fromARGB(255, colorDinamico4, 0, 150); // color dinamico segun fuerza
