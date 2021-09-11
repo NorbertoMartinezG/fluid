@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -179,21 +180,27 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
              double r = rij2.normalize(); // norm en eigen c++
              if (r < H) {
 
-              // compute pressure force contribution de cada particula vecina
-				      // normalizar un vector es tomar un vector de cualquier longitud y, mientras sigue apuntando en la misma dirección, cambiar su longitud a 1, convirtiéndolo en lo que se conoce como un vector unitario.
-				      // normalized() Normaliza un vector conocido en tiempo de compilación  Devuelve lo anterior como una copia construida, no afecta a la clase. Puede usarlo para asignar - Vector normCopy = vect.normalized().
+                // compute pressure force contribution de cada particula vecina
+                // normalizar un vector es tomar un vector de cualquier longitud y, mientras sigue apuntando en la misma dirección, cambiar su longitud a 1, convirtiéndolo en lo que se conoce como un vector unitario.
+                // normalized() Normaliza un vector conocido en tiempo de compilación  Devuelve lo anterior como una copia construida, no afecta a la clase. Puede usarlo para asignar - Vector normCopy = vect.normalized().
 
-      				fpress += -(rij2.normalized()) * MASS * (nodeList[x].presion + nodeList[j].presion) / (2.0 * nodeList[j].densidad) * SPIKY_GRAD * pow(H - r, 2.0); 
-              //fpress += (rij2.normalized())* -1 * MASS * (nodeList[x].presion + nodeList[j].presion) / (2.0 * nodeList[j].densidad) * SPIKY_GRAD * pow(H - r, 2.0); 
-              fpress2 = Offset(fpress[0],fpress[1]); // tomar valores de (fpress vector2) para (fpress2 offset)
-			      	// compute viscosity force contribution
-				      fvisc += ((nodeList[j].viscosidad - nodeList[x].viscosidad)/nodeList[j].densidad)* VISC * MASS * VISC_LAP * (H-r); // variable offset 
+                fpress += -(rij2.normalized()) * MASS * (nodeList[x].presion + nodeList[j].presion) / (2.0 * nodeList[j].densidad) * SPIKY_GRAD * pow(H - r, 2.0); 
+                //fpress += (rij2.normalized())* -1 * MASS * (nodeList[x].presion + nodeList[j].presion) / (2.0 * nodeList[j].densidad) * SPIKY_GRAD * pow(H - r, 2.0); 
+                fpress2 = Offset(fpress[0],fpress[1]); // tomar valores de (fpress vector2) para (fpress2 offset)
+                // compute viscosity force contribution
+                fvisc += ((nodeList[j].viscosidad - nodeList[x].viscosidad)/nodeList[j].densidad)* VISC * MASS * VISC_LAP * (H-r); // variable offset 
              }
            }
-           Offset fgrav = G * nodeList[x].densidad;
-          nodeList[x].fuerzas = fgrav - fvisc + fpress2;
-           //print(nodeList[x].fuerzas);
-           //print("funciona");
+            Offset fgrav = G * nodeList[x].densidad;
+            nodeList[x].fuerzas = fgrav - fvisc + fpress2;
+            //print(nodeList[x].fuerzas);
+            //print("funciona");
+            
+            double fuerzaTotal = nodeList[x].fuerzas.dx + nodeList[x].fuerzas.dy ;
+            double colorDinamico2 = fuerzaTotal/100;
+            int colorDinamico3 = colorDinamico2.toInt(); 
+            int colorDinamico4 = colorDinamico3.abs();
+            nodeList[x].notePaint.color=Color.fromARGB(255, colorDinamico4, 0, 150); // color dinamico segun fuerza
          }
         // ComputeForces -----------------------------------------------------------
         // Integracion -------------------------------------------------------------
@@ -349,7 +356,7 @@ class Node {
     direction = Direction.values[random.nextInt(Direction.values.length)];
 
     notePaint = new Paint()
-      ..color = Colors.redAccent
+      ..color = Colors.blueAccent
       ..strokeWidth = 1.0
       ..style = PaintingStyle.fill;
     linePaint = new Paint()
