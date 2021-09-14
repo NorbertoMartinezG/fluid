@@ -6,11 +6,19 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math.dart' hide Colors; // Colors esta definida tanto en libreria material como en Vector
 
+import 'package:sensors_plus/sensors_plus.dart';
+
+import 'package:flutter/services.dart'; // para evitar rotacion entre otros
+
 // SPH fluid
 main() {
-  runApp(new MaterialApp(
-    home: new DemoPage(),
-  ));
+  
+  WidgetsFlutterBinding.ensureInitialized();// para evitar que gire la pantalla agregar libreria services
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])// para evitar que gire la pantalla agregar libreria services
+    .then((_) {// para evitar que gire la pantalla agregar libreria services
+      runApp(new MaterialApp(home: new DemoPage()));
+      });
+
 }
 
 class DemoPage extends StatelessWidget {
@@ -45,10 +53,29 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
   final nodeList = <Node>[];
   final numNodes = 100;
 
+  double gyroX = 0;
+  double gyroY = 0;
+  double gyroZ = 0;
+
   @override
   void initState() {
     super.initState();
 
+    
+      // Para interaccion con girospio, acelerometro,
+      gyroscopeEvents.listen((GyroscopeEvent event) { // agregar libreria sensor_plus.dart
+      setState(() {
+        // gyroX = ((event.x * 100).round() / 100).clamp(-1.0, 1.0) * -1;
+        // gyroY = ((event.y * 100).round() / 100).clamp(-1.0, 1.0);
+        // gyroZ = ((event.y * 100).round() / 100).clamp(-1.0, 1.0);
+        gyroX = event.x;
+        gyroY = event.y;
+        gyroZ = event.z;
+      });
+    });
+    
+     
+    
     double REST_DENS = 1000.0; // densidad en reposo
     double GAS_CONST = 2000.0; // const for equation of state
     double H = 16.0; // kernel radius
@@ -192,7 +219,13 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
                 //print(fvisc);
              }
            }
-            Offset fgrav = G * nodeList[x].densidad;
+
+            //G = Offset(0.0, 12000 * 9.8 * (1 + (gyroX + gyroY + gyroZ))); // gravedad 9.8 modificada temporalmente 
+            //G = Offset(0.0, 12000 * 9.8 * (gyroX + gyroY + gyroZ)); // gravedad variable
+            
+            //Offset fgrav = G * gyroZ * nodeList[x].densidad; // agregar directamente valor gyroscopio y se queda modificada gravedad a 0 despues de interaccion con gyroscopio
+            //Offset fgrav = G * (gyroZ + 1) * nodeList[x].densidad; // agregar directamente valor gyroscopio y se recupera gravedad
+            Offset fgrav = G * nodeList[x].densidad; // original
             nodeList[x].fuerzas = fgrav + fvisc + fpress2;
             //print(nodeList[x].fuerzas);
             //print("funciona");
@@ -273,7 +306,7 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
               }
         }
 
-
+       print(gyroZ); //valor z acelerometro
       }
     )
       ..repeat();
@@ -343,14 +376,14 @@ class Node {
 
   Node(
       {@required this.id,
-      this.size = 5.0,//Tamaño del punto 
+      this.size = 8.0,//Tamaño del punto 
       this.radius = 200.0,
       @required this.position,
       @required this.densidad,
       @required this.viscosidad,
       @required this.velocidad,
       @required this.screenSize}) {
-    random = new Random();
+    random = new Random(); 
     //connected = new Map();
     //position = screenSize.center(Offset.zero);
     //position = Offset(Random().nextDouble()*screenSize.width, Random().nextDouble()*screenSize.height); // posicion inicial
@@ -554,3 +587,4 @@ class Node {
   bool operator ==(o) => o is Node && o.id == id;
   int get hashCode => id;
 }
+
