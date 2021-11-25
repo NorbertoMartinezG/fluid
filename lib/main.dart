@@ -48,7 +48,7 @@ class DemoBody extends StatefulWidget {
 class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
   AnimationController animationController;
   final coleccionParticulas = <Particle>[];
-  final numParticulas = 507;
+  final numParticulas = 300;
 
   double gyroX = 0;
   double gyroY = 0;
@@ -123,12 +123,12 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
       } 
     );
 
+void move(){
 
-    animationController = new AnimationController(
-        vsync: this, duration: new Duration(seconds: 10))
-      ..addListener(() {
-        // Compute Density Pressure --------------------------------------------------
-        for (int x = 0; x < coleccionParticulas.length; x++) {
+
+          // Compute Density Pressure --------------------------------------------------
+        for (int x = 0; x < coleccionParticulas.length; x++) 
+        {
 
           //coleccionParticulas[x].move();
           coleccionParticulas[x].densidad = 0.0;
@@ -247,6 +247,21 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
         }
 
        
+
+
+
+
+
+
+}
+
+
+    animationController = new AnimationController(
+        vsync: this, duration: new Duration(seconds: 10))
+      ..addListener(() {
+
+          move();
+
       }
     )
       ..repeat();
@@ -307,7 +322,7 @@ class Particle {
 
   Particle(
       {@required this.id,
-      this.size = 4.0,//Tamaño del punto 
+      this.size = 8.0,//Tamaño del punto 
       this.radius = 100.0,
       @required this.position,
       @required this.densidad,
