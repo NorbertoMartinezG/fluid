@@ -10,6 +10,10 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 import 'package:flutter/services.dart'; // para evitar rotacion entre otros
 
+// import 'package:cpu_reader/cpu_reader.dart';
+// import 'package:cpu_reader/cpuinfo.dart';
+
+
 // SPH fluid
 main() {
   
@@ -48,7 +52,7 @@ class DemoBody extends StatefulWidget {
 class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
   AnimationController animationController;
   final coleccionParticulas = <Particle>[];
-  final numParticulas = 300;
+  final numParticulas = 1000;
 
   double gyroX = 0;
   double gyroY = 0;
@@ -122,6 +126,16 @@ class _DemoBodyState extends State<DemoBody> with TickerProviderStateMixin {
         );
       } 
     );
+
+// FutureBuilder<CpuInfo>(
+//                   future: CpuReader.cpuInfo,
+//                   builder: (context, AsyncSnapshot<CpuInfo> snapshot) =>
+//                       snapshot.hasData
+//                           ? Text(
+//                               'Number of cores: ${snapshot.data.numberOfCores}')
+//                           : Text('No data!'));
+
+
 
 void move(){
 
@@ -267,6 +281,7 @@ void move(){
       ..repeat();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return new Container(
@@ -322,7 +337,7 @@ class Particle {
 
   Particle(
       {@required this.id,
-      this.size = 8.0,//Tamaño del punto 
+      this.size = 6.0,//Tamaño del punto 
       this.radius = 100.0,
       @required this.position,
       @required this.densidad,
